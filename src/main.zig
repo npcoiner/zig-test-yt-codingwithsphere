@@ -20,10 +20,19 @@ pub fn main() !void {
         .projection = rl.CameraProjection.perspective,
     };
 
-    //rl.disableCursor(); Don't do this, causes errors
+    rl.disableCursor(); //Don't do this, causes errors
+    rl.toggleFullscreen();
+    rl.hideCursor();
 
     while (!rl.windowShouldClose()) {
-        rl.updateCamera(&camera, rl.CameraMode.third_person);
+        if (rl.isKeyDown(rl.KeyboardKey.space)) {
+            camera.position.y += 0.1;
+        }
+        if (rl.isKeyDown(rl.KeyboardKey.left_control)) {
+            camera.position.y -= 0.1;
+        }
+
+        rl.updateCamera(&camera, rl.CameraMode.first_person);
         rl.beginDrawing();
         defer rl.endDrawing();
 
@@ -32,8 +41,9 @@ pub fn main() !void {
         rl.beginMode3D(camera);
         defer rl.endMode3D();
 
-        rl.drawGrid(10, 1.0);
+        //Test cube
+        //rl.drawGrid(10, 1.0);
         rl.drawCube(rl.Vector3{ .x = 0, .y = 0, .z = 0 }, 2, 2, 2, rl.Color.red);
-        rl.drawCubeWires(rl.Vector3{ .x = 0, .y = 0, .z = 0 }, 2, 2, 2, rl.Color.maroon);
+        //rl.drawCubeWires(rl.Vector3{ .x = 0, .y = 0, .z = 0 }, 2, 2, 2, rl.Color.maroon);
     }
 }
