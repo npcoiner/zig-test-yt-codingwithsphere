@@ -21,7 +21,7 @@ pub fn main() !void {
     while (!rl.windowShouldClose()) {
         handleKeyPress(&camera);
 
-        rl.updateCameraPro(&camera, rl.Vector3{ .x = 0, .y = 0, .z = 0 }, getRotationMatrix(sensitivity), 0);
+        rl.updateCameraPro(&camera, getMovementMatrix(), getRotationMatrix(sensitivity), 0);
 
         //rl.updateCamera(&camera, rl.CameraMode.first_person);
         rl.beginDrawing();
@@ -59,6 +59,23 @@ fn getRotationMatrix(sensitivity: f32) rl.Vector3 {
     rotation.y += mouseDelta.y * sensitivity;
 
     return rotation;
+}
+
+fn getMovementMatrix() rl.Vector3 {
+    var movementMarix = rl.Vector3{ .x = 0, .y = 0, .z = 0 };
+    if (rl.isKeyDown(rl.KeyboardKey.w)) {
+        movementMarix.x += 0.1;
+    }
+    if (rl.isKeyDown(rl.KeyboardKey.a)) {
+        movementMarix.y -= 0.1;
+    }
+    if (rl.isKeyDown(rl.KeyboardKey.s)) {
+        movementMarix.x -= 0.1;
+    }
+    if (rl.isKeyDown(rl.KeyboardKey.d)) {
+        movementMarix.y += 0.1;
+    }
+    return movementMarix;
 }
 
 fn handleKeyPress(camera: *rl.Camera3D) void {
