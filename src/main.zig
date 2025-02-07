@@ -19,27 +19,37 @@ pub fn main() !void {
     var camera = createCamera();
 
     while (!rl.windowShouldClose()) {
-        handleKeyPress(&camera);
-
         rl.updateCameraPro(&camera, getMovementMatrix(), getRotationMatrix(sensitivity), 0);
 
-        //rl.updateCamera(&camera, rl.CameraMode.first_person);
+        //IMPORTANT DRAWING REQUIREMENTS DO NOT ALTER
         rl.beginDrawing();
         defer rl.endDrawing();
-
         rl.clearBackground(backgroundColor);
-
         rl.beginMode3D(camera);
         defer rl.endMode3D();
 
-        //Test cubes
-        rl.drawGrid(100, 1.0);
-        rl.drawCube(rl.Vector3{ .x = 10, .y = 0, .z = 0 }, 2, 2, 2, rl.Color.red);
-        rl.drawCube(rl.Vector3{ .x = 0, .y = 10, .z = 0 }, 2, 2, 2, rl.Color.green);
-        rl.drawCube(rl.Vector3{ .x = 0, .y = 0, .z = 10 }, 2, 2, 2, rl.Color.blue);
+        drawTestCubes();
     }
 }
 
+//--------------------Definitions----------------
+const objType = enum { sphere, cube, plane };
+
+//--------------------Structs--------------------
+const gameObject = struct {
+    type: objType,
+    rigid: bool,
+    isPlayer: bool,
+};
+//--------------------Functions------------------
+//Draws test cubes for debugging.
+fn drawTestCubes() void {
+    rl.drawGrid(100, 1.0);
+    rl.drawCube(rl.Vector3{ .x = 10, .y = 0, .z = 0 }, 2, 2, 2, rl.Color.red);
+    rl.drawCube(rl.Vector3{ .x = 0, .y = 10, .z = 0 }, 2, 2, 2, rl.Color.green);
+    rl.drawCube(rl.Vector3{ .x = 0, .y = 0, .z = 10 }, 2, 2, 2, rl.Color.blue);
+}
+//Initiates the camera with position, target direction, up direction, fov, and the type of projection.
 fn createCamera() rl.Camera3D {
     return rl.Camera3D{
         .position = rl.Vector3{ .x = 0.0, .y = 2.0, .z = 0.0 },
@@ -49,7 +59,7 @@ fn createCamera() rl.Camera3D {
         .projection = rl.CameraProjection.perspective,
     };
 }
-
+//Returns the rotation matrix for updating the camera given the mouse x,y delta
 fn getRotationMatrix(sensitivity: f32) rl.Vector3 {
     const mouseDelta = rl.getMouseDelta();
     //init rotation matrix
@@ -60,7 +70,7 @@ fn getRotationMatrix(sensitivity: f32) rl.Vector3 {
 
     return rotation;
 }
-
+//Returns the camera position update matrix based on keyboard inputs. Should not be used to move player, only the camera.
 fn getMovementMatrix() rl.Vector3 {
     var movementMarix = rl.Vector3{ .x = 0, .y = 0, .z = 0 };
     if (rl.isKeyDown(rl.KeyboardKey.w)) {
@@ -75,14 +85,11 @@ fn getMovementMatrix() rl.Vector3 {
     if (rl.isKeyDown(rl.KeyboardKey.d)) {
         movementMarix.y += 0.1;
     }
-    return movementMarix;
-}
-
-fn handleKeyPress(camera: *rl.Camera3D) void {
     if (rl.isKeyDown(rl.KeyboardKey.space)) {
-        camera.position.y += 0.1;
+        movementMarix.z += 0.1;
     }
     if (rl.isKeyDown(rl.KeyboardKey.left_control)) {
-        camera.position.y -= 0.1;
+        movementMarix.z -= 0.1;
     }
+    return movementMarix;
 }
