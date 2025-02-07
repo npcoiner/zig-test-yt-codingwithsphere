@@ -1,0 +1,4 @@
+make sure to get c-raylib's dependencies
+
+build to exe:
+zig build run -Dtarget=x86_64-windows
